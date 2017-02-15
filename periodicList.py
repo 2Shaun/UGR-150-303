@@ -11,7 +11,45 @@ import operator
 
 start = timeit.default_timer()
 exprStack = []
+period = []
 
+# BEGIN GUI
+class MyGUI:
+    def __init__(self):
+        self.main_window = tkinter.Tk()
+        self.preimage_frame = tkinter.Frame(self.main_window)
+        self.generator_frame = tkinter.Frame(self.main_window)
+        self.divisor_frame = tkinter.Frame(self.main_window)
+
+        self.preimage_label = tkinter.Label(self.preimage_frame, \
+                text='Pre-Image(x):')
+        self.preimage_entry = tkinter.Entry(self.preimage_frame)
+
+        self.generator_label = tkinter.Label(self.generator_frame, \
+                text='Generator(phi):')
+        self.generator_entry = tkinter.Entry(self.generator_frame)
+
+        self.divisor_label = tkinter.Label(self.divisor_frame, \
+                text='Divisor:')
+        self.divisor_entry = tkinter.Entry(self.divisor_frame)
+
+        self.generate_button = tkinter.Button(text='Generate')
+        
+        self.preimage_frame.pack()
+        self.preimage_label.pack(side='left')
+        self.preimage_entry.pack(side='right')
+        self.generator_frame.pack()
+        self.generator_label.pack(side='left')
+        self.generator_entry.pack(side='right')
+        self.divisor_frame.pack()
+        self.divisor_label.pack(side='left')
+        self.divisor_entry.pack(side='right')
+        self.generate_button.pack(side='bottom')
+
+        tkinter.mainloop()
+# END GUI
+
+# BEGIN PARSER
 def pushFirst(strg, loc, toks):
     exprStack.append(toks[0])
 
@@ -106,6 +144,7 @@ def evaluateStack(s, image):
         return int(op)
 # END PARSER
 
+# BEGIN LINKED LIST
 class Node(object):
     def __init__(self, data=None, next_node=None):
         self.data = data
@@ -157,10 +196,11 @@ class LinkedList(object):
         i = 0
 
         while current != None and i <= iterations:
-            print(("{}").format(current.data), " ", end="")
+            print(("{}").format(current.data), " ", end="") # end="" specifies no newline char
             current = current.get_next()
             i += 1
         print()
+# END LINKED LIST
 
 def generate(linkedlist, preimage, divisor, phi, iterations):
     #phi = preimage
@@ -176,6 +216,7 @@ def generate(linkedlist, preimage, divisor, phi, iterations):
        linkedlist.insert(moddedPreimage)
        preimage = int(evaluateStack(exprStack[:], preimage))
 
+# BEGIN TORTOISE AND HARE
 def findAndPrintPeriodicValues(linkedlist):
     tortoise = linkedlist.head.get_next()
     hare = linkedlist.head.get_next().get_next()
@@ -197,9 +238,11 @@ def findAndPrintPeriodicValues(linkedlist):
     print(("pre-periodic nodes: {} periodicity: {}").format(preperiodicNodes, periodicity))
     linkedlist.printList(periodicity+preperiodicNodes);
     print(("pre-periodic nodes: {} periodicity: {}").format(preperiodicNodes, periodicity))
+# END TORTOISE AND HARE
 
 if __name__ == "__main__":
     import sys
+    my_gui = MyGUI()
     modImageNodes = LinkedList()
     generate(modImageNodes, int(sys.argv[1]), int(sys.argv[2]), str(sys.argv[3]), int(sys.argv[4])) 
     # python program preimage divisor phi
