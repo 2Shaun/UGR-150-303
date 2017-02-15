@@ -1,6 +1,10 @@
+#import pdb
+#pdb.set_trace()
+
 from pyparsing import Literal,CaselessLiteral,Word,Combine,Group,Optional,ZeroOrMore,Forward,nums,alphas
 
 import timeit
+import tkinter
 import gmpy2
 import math
 import operator
@@ -93,13 +97,13 @@ def evaluateStack(s, image):
     elif op == "E":
         return math.e
     elif op == "X":
-        return long(image)
+        return int(image)
     elif op in fn:
         return fn[op](evaluateStack(s, image))
     elif op[0].isalpha():
         return 0
     else:
-        return long(op)
+        return int(op)
 # END PARSER
 
 class Node(object):
@@ -145,7 +149,7 @@ class LinkedList(object):
     def tostring(self):
         current = self.head
         while current:
-            print current
+            print(current)
             current = current.get_next()
 
     def printList(self, iterations):
@@ -153,24 +157,24 @@ class LinkedList(object):
         i = 0
 
         while current != None and i <= iterations:
-            print "%d" % current.data,
+            print(("{}").format(current.data), " ", end="")
             current = current.get_next()
             i += 1
-        print
+        print()
 
 def generate(linkedlist, preimage, divisor, phi, iterations):
     #phi = preimage
     global exprStack
     exprstack = []
     results = BNF().parseString(phi)
-    print "first pre-image: %d divisor: %d" % (preimage, divisor)
+    print(("first pre-image: {} divisor: {}").format(preimage, divisor))
     for i in range(iterations):
         #preimage = preimage**2
-       #preimage = long(preimage % divisor)
-       #preimage = long(gmpy2.powmod(preimage,2,divisor))
-       moddedPreimage = long(gmpy2.f_mod(preimage, divisor))
+       #preimage = int(preimage % divisor)
+       #preimage = int(gmpy2.powmod(preimage,2,divisor))
+       moddedPreimage = int(gmpy2.f_mod(preimage, divisor))
        linkedlist.insert(moddedPreimage)
-       preimage = long(evaluateStack(exprStack[:], preimage))
+       preimage = int(evaluateStack(exprStack[:], preimage))
 
 def findAndPrintPeriodicValues(linkedlist):
     tortoise = linkedlist.head.get_next()
@@ -184,24 +188,24 @@ def findAndPrintPeriodicValues(linkedlist):
         tortoise = tortoise.get_next()
         hare = hare.get_next()
         preperiodicNodes += 1
-    print "first periodic node: %d " % tortoise.get_data(),
+    print(("first periodic node: {} ").format(tortoise.get_data()))
     periodicity = 1
     hare = tortoise.get_next()
     while tortoise.get_data() != hare.get_data():
         hare = hare.get_next()
         periodicity += 1
-    print "pre-periodic nodes: %d periodicity: %d" % (preperiodicNodes, periodicity)
+    print(("pre-periodic nodes: {} periodicity: {}").format(preperiodicNodes, periodicity))
     linkedlist.printList(periodicity+preperiodicNodes);
-    print "pre-periodic nodes: %d periodicity: %d" % (preperiodicNodes, periodicity)
+    print(("pre-periodic nodes: {} periodicity: {}").format(preperiodicNodes, periodicity))
 
 if __name__ == "__main__":
     import sys
     modImageNodes = LinkedList()
-    generate(modImageNodes, long(sys.argv[1]), long(sys.argv[2]), str(sys.argv[3]), int(sys.argv[4])) 
+    generate(modImageNodes, int(sys.argv[1]), int(sys.argv[2]), str(sys.argv[3]), int(sys.argv[4])) 
     # python program preimage divisor phi
-    #modPhiNodes.printList()
+    # modPhiNodes.printList()
     findAndPrintPeriodicValues(modImageNodes)
 
 stop = timeit.default_timer()
 
-print "time: %.2f s" % (stop - start )
+print(("time: {0:.2f} s").format(stop - start ))
