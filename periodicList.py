@@ -4,13 +4,14 @@
 from pyparsing import Literal,CaselessLiteral,Word,Combine,Group,Optional,ZeroOrMore,Forward,nums,alphas
 
 import timeit
-import tkinter
 import gmpy2
 import math
 import operator
 
 start = timeit.default_timer()
 exprStack = []
+periodic = []
+preperiodic = []
 
 def pushFirst(strg, loc, toks):
     exprStack.append(toks[0])
@@ -162,50 +163,67 @@ class LinkedList(object):
             i += 1
         print()
 
-def generate(linkedlist, preimage, divisor, phi, iterations):
+def generate(linkedlist, preimage, divisor, phi):
     #phi = preimage
     global exprStack
+    global tortoise
+    global hare
+    linkedlist.insert(preimage)
+
+    tortoise = linkedlist.head.get_next()
+    moddedPreimage = int(gmpy2.f_mod(preimage, divisor))
+    linkedlist.insert(moddedPreimage)
+    hare = linkedlist.head.get_next().get_next()
     exprstack = []
     results = BNF().parseString(phi)
     print(("first pre-image: {} divisor: {}").format(preimage, divisor))
-    for i in range(iterations):
+    for i in range(divisor*2):
         #preimage = preimage**2
-       #preimage = int(preimage % divisor)
-       #preimage = int(gmpy2.powmod(preimage,2,divisor))
-       moddedPreimage = int(gmpy2.f_mod(preimage, divisor))
-       linkedlist.insert(moddedPreimage)
-       preimage = int(evaluateStack(exprStack[:], preimage))
+        #preimage = int(preimage % divisor)
+        #preimage = int(gmpy2.powmod(preimage,2,divisor))
+        moddedPreimage = int(gmpy2.f_mod(preimage, divisor))
+        linkedlist.insert(moddedPreimage)
+        preimage = int(evaluateStack(exprStack[:], preimage))
+        if (i > 1 and i % divisor == 0 and findAndPrintPeriodicValues(linkedlist) == True):
+            return True
+        return False
 
 def findAndPrintPeriodicValues(linkedlist):
-    tortoise = linkedlist.head.get_next()
-    hare = linkedlist.head.get_next().get_next()
+    global tortoise
+    global hare
     while tortoise.get_data() != hare.get_data():
         tortoise = tortoise.get_next()
         hare = hare.get_next().get_next()
+        if tortoise.get_next() == None or hare.get_next().get_next() == None:
+            return False
     preperiodicNodes = 0
     tortoise = linkedlist.head
     while tortoise.get_data() != hare.get_data():
         tortoise = tortoise.get_next()
         hare = hare.get_next()
-        preperiodicNodes += 1
-    print(("first periodic node: {} ").format(tortoise.get_data()))
-    periodicity = 1
+        preperiodic.insert(tortoise.get_data())
+        #preperiodicNodes += 1
+    #print(("first periodic node: {} ").format(tortoise.get_data()))
+    periodic.insert(tortoise.get_data())
+    #periodicity = 1
     hare = tortoise.get_next()
     while tortoise.get_data() != hare.get_data():
         hare = hare.get_next()
-        periodicity += 1
-    print(("pre-periodic nodes: {} periodicity: {}").format(preperiodicNodes, periodicity))
-    linkedlist.printList(periodicity+preperiodicNodes);
-    print(("pre-periodic nodes: {} periodicity: {}").format(preperiodicNodes, periodicity))
+        #periodicity += 1
+        periodic.insert(hare.get_data())
+    #print(("pre-periodic nodes: {} periodicity: {}").format(preperiodicNodes, periodicity))
+    #linkedlist.printList(periodicity+preperiodicNodes);
+    #print(("pre-periodic nodes: {} periodicity: {}").format(preperiodicNodes, periodicity))
+    return True
 
 if __name__ == "__main__":
     import sys
     modImageNodes = LinkedList()
-    generate(modImageNodes, int(sys.argv[1]), int(sys.argv[2]), str(sys.argv[3]), int(sys.argv[4])) 
+    generate(modImageNodes, int(sys.argv[1]), int(sys.argv[2]), str(sys.argv[3]))
     # python program preimage divisor phi
     # modPhiNodes.printList()
     findAndPrintPeriodicValues(modImageNodes)
 
-stop = timeit.default_timer()
+stop = timeit.default_timer()                   # time 
 
-print(("time: {0:.2f} s").format(stop - start ))
+print(("time: {0:.2f} s").format(stop - start )) # print time
