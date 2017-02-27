@@ -253,7 +253,8 @@ def findPeriod(linkedlist):
         tortoise = tortoise.get_next()
         hare = hare.get_next()
     periodic.append(tortoise.get_data())
-    plt.plot(periodic[len(periodic)-1],elements[tortoise.get_position()])
+    plt.plot(periodic[len(periodic)-1],elements[tortoise.get_position()], 'bo')
+    
     hare = tortoise.get_next()
     while tortoise.get_data() != hare.get_data():
         periodic.append(hare.get_data())
@@ -266,6 +267,7 @@ if __name__ == "__main__":
     import sys
     modImageNodes = LinkedList()
     exprStack = []
+
     results = BNF().parseString(str(sys.argv[3]))
     print(("first pre-image: {} divisor: {}").format(sys.argv[1], sys.argv[2]))
     print('Periodic: ')
