@@ -7,6 +7,8 @@ import timeit
 import gmpy2
 import math
 import operator
+import numpy as np
+import matplotlib.pyplot as plt
 
 global exprStack
 global start
@@ -14,9 +16,11 @@ global periodic
 global preperiodic
 global tortoise
 global hare
+global elements
 start = timeit.default_timer()
 global results
 periodic = []
+elements = []
 preperiodic = []
 
 def pushFirst(strg, loc, toks):
@@ -114,9 +118,10 @@ def evaluateStack(s, image):
 # END PARSER
 
 class Node(object):
-    def __init__(self, data=None, next_node=None):
+    def __init__(self, data=None, next_node=None, position=0):
         self.data = data
         self.next_node = next_node
+        self.position = position
 
     def __str__(self):
         return str(self.data)
@@ -127,8 +132,14 @@ class Node(object):
     def get_next(self):
         return self.next_node
 
+    def get_position(self):
+        return self.position
+
     def set_next(self, new_next):
         self.next_node = new_next
+
+    def set_position(self, new_position):
+        self.position = new_position
 
 class LinkedList(object):
     def __init__(self, head=None, tail=None):
@@ -150,7 +161,8 @@ class LinkedList(object):
             self.head = new_node
         if self.tail != None:
             self.tail.next_node = new_node
-        
+            self.tail.next_node.set_position(self.tail.get_position()+1)
+
         self.tail = new_node
 
     def tostring(self):
@@ -174,13 +186,16 @@ def generate(linkedlist, preimage, divisor):
     global tortoise
     global hare
 
+    elements.append(preimage)
     moddedPreimage = int(gmpy2.f_mod(preimage, divisor))
     linkedlist.insert(moddedPreimage)
     preimage = int(evaluateStack(exprStack[:], preimage))   # iteration
+    elements.append(preimage)
     moddedPreimage = int(gmpy2.f_mod(preimage, divisor))    # image
     linkedlist.insert(moddedPreimage)
     tortoise = linkedlist.head.get_next()
     preimage = int(evaluateStack(exprStack[:], preimage))
+    elements.append(preimage)
     moddedPreimage = int(gmpy2.f_mod(preimage, divisor))
     linkedlist.insert(moddedPreimage)
     hare = linkedlist.head.get_next().get_next()
@@ -189,6 +204,7 @@ def generate(linkedlist, preimage, divisor):
         #preimage = int(preimage % divisor)
         #preimage = int(gmpy2.powmod(preimage,2,divisor))
         preimage = int(evaluateStack(exprStack[:], preimage))
+        elements.append(preimage)
         moddedPreimage = int(gmpy2.f_mod(preimage, divisor))
         linkedlist.insert(moddedPreimage)
         if i > 1 and i % 9 == 0 and findPeriod(linkedlist) == True:
@@ -213,6 +229,12 @@ def findStrictlyPrePeriodicNodes(divisor, periodic):
 
 
 def findPeriod(linkedlist):
+    # find period
+    # go back to find first occurrence of period
+    # shift periodic array so that it reflects correct order
+    # get position, find associated element
+    # for loop
+    #   plot(periodic(i), element(position))
     global tortoise
     global hare
     while tortoise.get_data() != hare.get_data():
@@ -222,7 +244,6 @@ def findPeriod(linkedlist):
             return False
         tortoise = tortoise.get_next()
         hare = hare.get_next().get_next()
-    #preperiodicNodes = 0
     tortoise = linkedlist.head
     while tortoise.get_data() != hare.get_data():
         if hare.get_next() == None or tortoise.get_next() == None:
@@ -231,17 +252,14 @@ def findPeriod(linkedlist):
             return False
         tortoise = tortoise.get_next()
         hare = hare.get_next()
-        #preperiodicNodes += 1
-    #print(("first periodic node: {} ").format(tortoise.get_data()))
     periodic.append(tortoise.get_data())
+    plt.plot(periodic[len(periodic)-1],elements[tortoise.get_position()])
     hare = tortoise.get_next()
     while tortoise.get_data() != hare.get_data():
         periodic.append(hare.get_data())
+        plt.plot(periodic[len(periodic)-1],elements[hare.get_position()], 'bo')
         hare = hare.get_next()
     periodic.append(hare.get_data())
-    #print(("pre-periodic nodes: {} periodicity: {}").format(preperiodicNodes, periodicity))
-    #linkedlist.printList(periodicity+preperiodicNodes);
-    #print(("pre-periodic nodes: {} periodicity: {}").format(preperiodicNodes, periodicity))
     return True
 
 if __name__ == "__main__":
@@ -256,6 +274,7 @@ if __name__ == "__main__":
     print('Strictly PrePeriodic: ')
     findStrictlyPrePeriodicNodes(int(sys.argv[2]), periodic)
     print(preperiodic)
+    plt.show()
     # python program preimage divisor phi
     # modPhiNodes.printList()
 
