@@ -270,16 +270,21 @@ if __name__ == "__main__":
 
     results = BNF().parseString(str(sys.argv[3]))
     print(("first pre-image: {} divisor: {}").format(sys.argv[1], sys.argv[2]))
-    print('Periodic: ')
+
+
     if (generate(modImageNodes, int(sys.argv[1]), int(sys.argv[2]))) == True:
+        print('Elements: ')
+        print(elements)
+        print('Periodic: ')
         print(periodic)
     print('Strictly PrePeriodic: ')
     findStrictlyPrePeriodicNodes(int(sys.argv[2]), periodic)
     print(preperiodic)
+    stop = timeit.default_timer()                   # time
+
+    print(("time: {0:.2f} s").format(stop - start ))
     plt.show()
     # python program preimage divisor phi
     # modPhiNodes.printList()
 
-stop = timeit.default_timer()                   # time 
-
-print(("time: {0:.2f} s").format(stop - start )) # print time
+ # print time
