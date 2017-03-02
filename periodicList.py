@@ -16,7 +16,6 @@ global periodic
 global preperiodic
 global tortoise
 global hare
-global elements
 start = timeit.default_timer()
 global results
 periodic = []
@@ -185,29 +184,28 @@ def generate(linkedlist, preimage, divisor):
     #phi = preimage
     global tortoise
     global hare
+    periodic = []
 
-    elements.append(preimage)
     moddedPreimage = int(gmpy2.f_mod(preimage, divisor))
     linkedlist.insert(moddedPreimage)
     preimage = int(evaluateStack(exprStack[:], preimage))   # iteration
-    elements.append(preimage)
     moddedPreimage = int(gmpy2.f_mod(preimage, divisor))    # image
     linkedlist.insert(moddedPreimage)
     tortoise = linkedlist.head.get_next()
     preimage = int(evaluateStack(exprStack[:], preimage))
-    elements.append(preimage)
     moddedPreimage = int(gmpy2.f_mod(preimage, divisor))
     linkedlist.insert(moddedPreimage)
     hare = linkedlist.head.get_next().get_next()
+    #if gmpy2.is_strong_prp(i) == True and
     for i in range(divisor*2):
         #preimage = preimage**2
         #preimage = int(preimage % divisor)
         #preimage = int(gmpy2.powmod(preimage,2,divisor))
         preimage = int(evaluateStack(exprStack[:], preimage))
-        elements.append(preimage)
         moddedPreimage = int(gmpy2.f_mod(preimage, divisor))
         linkedlist.insert(moddedPreimage)
-        if i > 1 and i % 9 == 0 and findPeriod(linkedlist) == True:
+        if i > 1 and i % (math.ceil(divisor/2)+math.ceil(divisor/3)) == 0 and findPeriod(linkedlist, divisor) == True:
+            print('Period found.')
             periodFound = True
             return True
     return False
@@ -228,7 +226,7 @@ def findStrictlyPrePeriodicNodes(divisor, periodic):
             preperiodic.append(i)
 
 
-def findPeriod(linkedlist):
+def findPeriod(linkedlist, modulus):
     # find period
     # go back to find first occurrence of period
     # shift periodic array so that it reflects correct order
@@ -247,38 +245,42 @@ def findPeriod(linkedlist):
     tortoise = linkedlist.head
     while tortoise.get_data() != hare.get_data():
         if hare.get_next() == None or tortoise.get_next() == None:
+            print('Period not found... trying again.')
             tortoise = linkedlist.head.get_next()
             hare = linkedlist.head.get_next().get_next()
             return False
         tortoise = tortoise.get_next()
         hare = hare.get_next()
     periodic.append(tortoise.get_data())
-    plt.plot(periodic[len(periodic)-1],elements[tortoise.get_position()], 'bo')
-    
+    plt.scatter(modulus, periodic[len(periodic)-1], s=1, c='b', marker='o')
+
     hare = tortoise.get_next()
     while tortoise.get_data() != hare.get_data():
         periodic.append(hare.get_data())
-        plt.plot(periodic[len(periodic)-1],elements[hare.get_position()], 'bo')
+        # (30, 25) 25 is periodic for f(x) % 30
+        plt.scatter(modulus, periodic[len(periodic)-1], s=1, c='b', marker='o')
         hare = hare.get_next()
-    periodic.append(hare.get_data())
     return True
 
 if __name__ == "__main__":
     import sys
-    modImageNodes = LinkedList()
     exprStack = []
 
     results = BNF().parseString(str(sys.argv[3]))
     print(("first pre-image: {} divisor: {}").format(sys.argv[1], sys.argv[2]))
 
 
-    if (generate(modImageNodes, int(sys.argv[1]), int(sys.argv[2]))) == True:
-        print('Elements: ')
-        print(elements)
-        print('Periodic: ')
-        print(periodic)
+    #if (generate(modImageNodes, int(sys.argv[1]), int(sys.argv[2]))) == True:
+    #    print('Periodic: ')
+    #    print(periodic)
+
+    for i in range(2, int(sys.argv[2])):
+        print(i)
+        modImageNodes = LinkedList()
+        generate(modImageNodes, int(sys.argv[1]), i)
+
     print('Strictly PrePeriodic: ')
-    findStrictlyPrePeriodicNodes(int(sys.argv[2]), periodic)
+    #findStrictlyPrePeriodicNodes(int(sys.argv[2]), periodic)
     print(preperiodic)
     stop = timeit.default_timer()                   # time
 
