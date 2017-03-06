@@ -1,14 +1,14 @@
-#import pdb
+#imporn pdb
 #pdb.set_trace()
 
-from pyparsing import Literal,CaselessLiteral,Word,Combine,Group,Optional,ZeroOrMore,Forward,nums,alphas
-
-import timeit
 import gmpy2
 import math
 import operator
-import numpy as np
+import timeit
+
 import matplotlib.pyplot as plt
+from pyparsing import Literal,CaselessLiteral,Word,Combine, Optional,ZeroOrMore,Forward,nums,alphas
+from sympy import isprime
 
 global exprStack
 global start
@@ -185,26 +185,30 @@ def generate(linkedlist, preimage, divisor):
     global tortoise
     global hare
     periodic = []
-
+    j = 0
     moddedPreimage = int(gmpy2.f_mod(preimage, divisor))
     linkedlist.insert(moddedPreimage)
     preimage = int(evaluateStack(exprStack[:], preimage))   # iteration
+    j+=1
     moddedPreimage = int(gmpy2.f_mod(preimage, divisor))    # image
     linkedlist.insert(moddedPreimage)
     tortoise = linkedlist.head.get_next()
     preimage = int(evaluateStack(exprStack[:], preimage))
+    j+=1
     moddedPreimage = int(gmpy2.f_mod(preimage, divisor))
     linkedlist.insert(moddedPreimage)
     hare = linkedlist.head.get_next().get_next()
     #if gmpy2.is_strong_prp(i) == True and
-    for i in range(divisor*2):
+    #for i in range(divisor*2):
+    while(True):
         #preimage = preimage**2
         #preimage = int(preimage % divisor)
         #preimage = int(gmpy2.powmod(preimage,2,divisor))
         preimage = int(evaluateStack(exprStack[:], preimage))
+        j+=1
         moddedPreimage = int(gmpy2.f_mod(preimage, divisor))
         linkedlist.insert(moddedPreimage)
-        if i > 1 and i % (math.ceil(divisor/2)+math.ceil(divisor/3)) == 0 and findPeriod(linkedlist, divisor) == True:
+        if j > 1 and j % 5 == 0 and findPeriod(linkedlist, divisor) == True:
             print('Period found.')
             periodFound = True
             return True
@@ -236,7 +240,7 @@ def findPeriod(linkedlist, modulus):
     global tortoise
     global hare
     while tortoise.get_data() != hare.get_data():
-        if hare.get_next().get_next() == None or tortoise.get_next() == None:
+        if hare.get_next() == None or hare.get_next().get_next() == None:
             tortoise = linkedlist.head.get_next()
             hare = linkedlist.head.get_next().get_next()
             return False
@@ -244,7 +248,7 @@ def findPeriod(linkedlist, modulus):
         hare = hare.get_next().get_next()
     tortoise = linkedlist.head
     while tortoise.get_data() != hare.get_data():
-        if hare.get_next() == None or tortoise.get_next() == None:
+        if hare.get_next() == None:
             print('Period not found... trying again.')
             tortoise = linkedlist.head.get_next()
             hare = linkedlist.head.get_next().get_next()
@@ -252,13 +256,28 @@ def findPeriod(linkedlist, modulus):
         tortoise = tortoise.get_next()
         hare = hare.get_next()
     periodic.append(tortoise.get_data())
-    plt.scatter(modulus, periodic[len(periodic)-1], s=1, c='b', marker='o')
+    if isprime(modulus) == True:
+        plt.scatter(modulus, periodic[len(periodic)-1], s=4, c='r', marker='*')
+        #elif isprime(periodic[len(periodic)-1]) == True:
+        #plt.scatter(modulus, periodic[len(periodic)-1], s=4, c='b', marker='*')
+        #elif isprime(modulus) == True and isprime(periodic[len(periodic)-1]) == True:
+        #plt.scatter(modulus, periodic[len(periodic)-1], s=4, c='m', marker='*')
+    else:
+        plt.scatter(modulus, periodic[len(periodic)-1], s=4, c='k', marker='.')
 
     hare = tortoise.get_next()
     while tortoise.get_data() != hare.get_data():
         periodic.append(hare.get_data())
         # (30, 25) 25 is periodic for f(x) % 30
-        plt.scatter(modulus, periodic[len(periodic)-1], s=1, c='b', marker='o')
+        if isprime(modulus) == True:
+            plt.scatter(modulus, periodic[len(periodic)-1], s=4, c='r', marker='*')
+        #elif isprime(periodic[len(periodic)-1]) == True:
+            #plt.scatter(modulus, periodic[len(periodic)-1], s=4, c='b', marker='*')
+        #elif isprime(modulus) == True and isprime(periodic[len(periodic)-1]) == True:
+            #plt.scatter(modulus, periodic[len(periodic)-1], s=4, c='m', marker='*')
+        else:
+            plt.scatter(modulus, periodic[len(periodic)-1], s=4, c='k', marker='.')
+
         hare = hare.get_next()
     return True
 
@@ -275,7 +294,7 @@ if __name__ == "__main__":
     #    print(periodic)
 
     for i in range(2, int(sys.argv[2])):
-        print(i)
+        print(('mod {}').format(i))
         modImageNodes = LinkedList()
         generate(modImageNodes, int(sys.argv[1]), i)
 
