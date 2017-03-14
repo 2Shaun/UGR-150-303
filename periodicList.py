@@ -207,7 +207,7 @@ def generate(linkedlist, preimage, divisor):
         j+=1
         moddedPreimage = int(gmpy2.f_mod(preimage, divisor))
         linkedlist.insert(moddedPreimage)
-        if j > 1 and j % math.ceil(divisor*(1/2+1/3)) == 0 and findPeriod(linkedlist, divisor) == True:
+        if j > 1 and j % math.ceil(divisor*(1/2)) == 0 and findPeriod(linkedlist, divisor) == True:
             print('Period found.')
             periodFound = True
             return True
@@ -255,13 +255,49 @@ def findPeriod(linkedlist, modulus):
         tortoise = tortoise.get_next()
         hare = hare.get_next()
     periodic.append(tortoise.get_data())
-    plt.scatter(modulus, periodic[len(periodic)-1], s=4, c='k', marker='.')
+    #plt.scatter(modulus, periodic[len(periodic)-1], s=1, c='k', marker='.')
 
     hare = tortoise.get_next()
     while tortoise.get_data() != hare.get_data():
         periodic.append(hare.get_data())
-        # (30, 25) 25 is periodic for f(x) % 30
-        plt.scatter(modulus, periodic[len(periodic)-1], s=4, c='k', marker='.')
+        # (30, 25) 25 is periodic for f(x) % 30]
+        if(periodic[len(periodic)-1] == 481):
+            plt.scatter(modulus, periodic[len(periodic)-1], s=1, c='k', marker='.')
+            hare = hare.get_next()
+            continue
+        elif (modulus*(-1) + 481 ==periodic[len(periodic)-1]):
+            plt.scatter(modulus, periodic[len(periodic)-1], s=1, c='k', marker='.')
+            hare = hare.get_next()
+            continue
+        elif (modulus*(-2) + 481 ==periodic[len(periodic)-1]):
+            plt.scatter(modulus, periodic[len(periodic)-1], s=1, c='k', marker='.')
+            hare = hare.get_next()
+            continue
+        elif (modulus*(-3) + 481 ==periodic[len(periodic)-1]):
+            plt.scatter(modulus, periodic[len(periodic)-1], s=1, c='k', marker='.')
+            hare = hare.get_next()
+            continue
+        elif (modulus*(-4) + 481 ==periodic[len(periodic)-1]):
+            plt.scatter(modulus, periodic[len(periodic)-1], s=1, c='k', marker='.')
+            hare = hare.get_next()
+            continue
+        elif (modulus*(-5) + 481 ==periodic[len(periodic)-1]):
+            plt.scatter(modulus, periodic[len(periodic)-1], s=1, c='k', marker='.')
+            hare = hare.get_next()
+            continue
+        elif (modulus*(-6) + 481 ==periodic[len(periodic)-1]):
+            plt.scatter(modulus, periodic[len(periodic)-1], s=1, c='k', marker='.')
+            hare = hare.get_next()
+            continue
+        elif (modulus*(-7) + 481 ==periodic[len(periodic)-1]):
+            plt.scatter(modulus, periodic[len(periodic)-1], s=1, c='k', marker='.')
+            hare = hare.get_next()
+            continue
+        elif (modulus*(-8) + 481 ==periodic[len(periodic)-1]):
+            plt.scatter(modulus, periodic[len(periodic)-1], s=1, c='k', marker='.')
+            hare = hare.get_next()
+            continue
+        #plt.scatter(modulus, periodic[len(periodic)-1], s=1, c='k', marker='.')
 
         hare = hare.get_next()
     return True
