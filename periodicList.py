@@ -5,6 +5,7 @@ import gmpy2
 import math
 import operator
 import timeit
+import tkinter
 
 import matplotlib.pyplot as plt
 from pyparsing import Literal,CaselessLiteral,Word,Combine, Optional,ZeroOrMore,Forward,nums,alphas
@@ -208,7 +209,7 @@ def generate(linkedlist, preimage, divisor):
         moddedPreimage = int(gmpy2.f_mod(preimage, divisor))
         linkedlist.insert(moddedPreimage)
         if j > 1 and j % math.ceil(divisor*(1/2)) == 0 and findPeriod(linkedlist, divisor) == True:
-            print('Period found.')
+            print('{} Period found.'.format(divisor))
             periodFound = True
             return True
     return False
@@ -230,12 +231,6 @@ def findStrictlyPrePeriodicNodes(divisor, periodic):
 
 
 def findPeriod(linkedlist, modulus):
-    # find period
-    # go back to find first occurrence of period
-    # shift periodic array so that it reflects correct order
-    # get position, find associated element
-    # for loop
-    #   plot(periodic(i), element(position))
     global tortoise
     global hare
     while tortoise.get_data() != hare.get_data():
@@ -255,77 +250,82 @@ def findPeriod(linkedlist, modulus):
         tortoise = tortoise.get_next()
         hare = hare.get_next()
     periodic.append(tortoise.get_data())
-    #plt.scatter(modulus, periodic[len(periodic)-1], s=1, c='k', marker='.')
+    plt.scatter(modulus, periodic[len(periodic)-1], s=1, c='k', marker='.')                                             # plot last element added to periodic list
+    #plt.text(modulus,periodic[len(periodic)-1],("({},{})").format(modulus, periodic[len(periodic)-1]))
 
     hare = tortoise.get_next()
     while tortoise.get_data() != hare.get_data():
         periodic.append(hare.get_data())
+        # will have to parse equation of the form m*x + b
+        # m and b are arbitrary constants
+        # x is in the equation
+        # integer + multop + atom + addop + integer
+        # if (modulus*(slope) + shift == periodic[len(periodic)-1]):
         # (30, 25) 25 is periodic for f(x) % 30]
-        if(periodic[len(periodic)-1] == 481):
-            plt.scatter(modulus, periodic[len(periodic)-1], s=1, c='k', marker='.')
-            hare = hare.get_next()
-            continue
-        elif (modulus*(-1) + 481 ==periodic[len(periodic)-1]):
-            plt.scatter(modulus, periodic[len(periodic)-1], s=1, c='k', marker='.')
-            hare = hare.get_next()
-            continue
-        elif (modulus*(-2) + 481 ==periodic[len(periodic)-1]):
-            plt.scatter(modulus, periodic[len(periodic)-1], s=1, c='k', marker='.')
-            hare = hare.get_next()
-            continue
-        elif (modulus*(-3) + 481 ==periodic[len(periodic)-1]):
-            plt.scatter(modulus, periodic[len(periodic)-1], s=1, c='k', marker='.')
-            hare = hare.get_next()
-            continue
-        elif (modulus*(-4) + 481 ==periodic[len(periodic)-1]):
-            plt.scatter(modulus, periodic[len(periodic)-1], s=1, c='k', marker='.')
-            hare = hare.get_next()
-            continue
-        elif (modulus*(-5) + 481 ==periodic[len(periodic)-1]):
-            plt.scatter(modulus, periodic[len(periodic)-1], s=1, c='k', marker='.')
-            hare = hare.get_next()
-            continue
-        elif (modulus*(-6) + 481 ==periodic[len(periodic)-1]):
-            plt.scatter(modulus, periodic[len(periodic)-1], s=1, c='k', marker='.')
-            hare = hare.get_next()
-            continue
-        elif (modulus*(-7) + 481 ==periodic[len(periodic)-1]):
-            plt.scatter(modulus, periodic[len(periodic)-1], s=1, c='k', marker='.')
-            hare = hare.get_next()
-            continue
-        elif (modulus*(-8) + 481 ==periodic[len(periodic)-1]):
-            plt.scatter(modulus, periodic[len(periodic)-1], s=1, c='k', marker='.')
-            hare = hare.get_next()
-            continue
-        #plt.scatter(modulus, periodic[len(periodic)-1], s=1, c='k', marker='.')
 
+        plt.scatter(modulus, periodic[len(periodic)-1], s=1, c='k', marker='.')
         hare = hare.get_next()
     return True
 
+
+class PeriodPlotterGUI:
+    def __init__(self):
+        self.main_window = tkinter.Tk()
+        self.main_window.title("Period Plotter")
+        self.main_window.minsize(width=500, height=200)
+        self.main_frame = tkinter.Frame(self.main_window)
+        self.function_label = tkinter.Label(self.main_frame, \
+                                            text='Function: ')
+        self.function_entry = tkinter.Entry(self.main_frame, width=20)
+        self.line_label = tkinter.Label(self.main_frame, \
+                                            text='Line(optional): ')
+        self.line_entry = tkinter.Entry(self.main_frame, width=20)
+        self.plot_button = tkinter.Button(self.main_frame, text='Plot', \
+                                          command=self.processData)
+        self.function_label.pack()
+        self.function_entry.pack()
+        self.line_label.pack()
+        self.line_entry.pack()
+        self.plot_button.pack()
+        self.main_frame.pack()
+
+        tkinter.mainloop()
+
+    def processData(self):
+        self.results = BNF().parseString(self.function_entry.get())
+        for i in range(2, 1000):
+            modImageNodes = LinkedList()
+            generate(modImageNodes, 5, i)
+        plt.show()
+
+
+
 if __name__ == "__main__":
-    import sys
+    #import sys
     exprStack = []
 
-    results = BNF().parseString(str(sys.argv[3]))
-    print(("first pre-image: {} divisor: {}").format(sys.argv[1], sys.argv[2]))
+    #results = BNF().parseString(str(sys.argv[3]))
+    #print(("first pre-image: {} divisor: {}").format(sys.argv[1], sys.argv[2]))
+
+    period_plotter = PeriodPlotterGUI()
 
 
     #if (generate(modImageNodes, int(sys.argv[1]), int(sys.argv[2]))) == True:
     #    print('Periodic: ')
     #    print(periodic)
 
-    for i in range(2, int(sys.argv[2])):
-        print(('mod {}').format(i))
-        modImageNodes = LinkedList()
-        generate(modImageNodes, int(sys.argv[1]), i)
+    #for i in range(2, int(sys.argv[2])):
+    #    print(('mod {}').format(i))
+    #    modImageNodes = LinkedList()
+    #    generate(modImageNodes, int(sys.argv[1]), i)
 
-    print('Strictly PrePeriodic: ')
+    #print('Strictly PrePeriodic: ')
     #findStrictlyPrePeriodicNodes(int(sys.argv[2]), periodic)
-    print(preperiodic)
-    stop = timeit.default_timer()                   # time
+    #print(preperiodic)
+    #stop = timeit.default_timer()                   # time
 
-    print(("time: {0:.2f} s").format(stop - start ))
-    plt.show()
+    #print(("time: {0:.2f} s").format(stop - start ))
+    #plt.show()
     # python program preimage divisor phi
     # modPhiNodes.printList()
 
