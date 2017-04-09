@@ -279,24 +279,28 @@ class PeriodPlotterGUI:
     def __init__(self):
         self.main_window = tkinter.Tk()
         self.main_window.title("Period Plotter")
-        self.main_window.minsize(width=500, height=200)
-        self.main_frame = tkinter.Frame(self.main_window)
-        self.function_label = tkinter.Label(self.main_frame, \
+        self.main_window.minsize(width=500, height=75)
+        self.function_frame = tkinter.Frame(self.main_window)
+        self.line_frame = tkinter.Frame(self.main_window)
+        self.button_frame = tkinter.Frame(self.main_window)
+        self.function_label = tkinter.Label(self.function_frame, \
                                             text='Function: ')
-        self.function_entry = tkinter.Entry(self.main_frame, width=20)
+        self.function_entry = tkinter.Entry(self.function_frame, width=20)
         self.function_entry.insert(0, 'x^2-3')
-        self.line_label = tkinter.Label(self.main_frame, \
-                                            text='Line(optional): ')
-        self.line_entry = tkinter.Entry(self.main_frame, width=20)
+        self.line_label = tkinter.Label(self.line_frame, \
+                                            text='Line (optional): ')
+        self.line_entry = tkinter.Entry(self.line_frame, width=20)
         self.line_entry.insert(0, '-1*x+481')
-        self.plot_button = tkinter.Button(self.main_frame, text='Plot', \
+        self.plot_button = tkinter.Button(self.button_frame, text='Plot', \
                                           command=self.processData)
-        self.function_label.pack()
-        self.function_entry.pack()
-        self.line_label.pack()
-        self.line_entry.pack()
-        self.plot_button.pack()
-        self.main_frame.pack()
+        self.function_label.pack(side=tkinter.LEFT)
+        self.function_entry.pack(side=tkinter.LEFT)
+        self.line_label.pack(side=tkinter.LEFT)
+        self.line_entry.pack(side=tkinter.LEFT)
+        self.plot_button.pack(side=tkinter.BOTTOM)
+        self.function_frame.pack()
+        self.line_frame.pack()
+        self.button_frame.pack()
 
         tkinter.mainloop()
 
