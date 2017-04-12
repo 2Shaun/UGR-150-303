@@ -22,6 +22,7 @@ periodic = []
 elements = []
 preperiodic = []
 
+# BEGIN PARSER
 def pushFirst(strg, loc, toks):
     exprStack.append(toks[0])
 
@@ -116,6 +117,7 @@ def evaluateStack(s, image):
         return int(op)
 # END PARSER
 
+# BEGIN LINKED LIST
 class Node(object):
     def __init__(self, data=None, next_node=None, position=0):
         self.data = data
@@ -179,25 +181,27 @@ class LinkedList(object):
             current = current.get_next()
             i += 1
         print()
+# END LINKED LIST
 
-def generate(linkedlist, preimage, divisor, slope, b):
+# BEGIN ITERATOR
+def generate(linkedlist, preimage, divisor, slope, b):                                                                  # preimage starts with 5
     #phi = preimage
     global tortoise
     global hare
     periodic = []
     j = 0
-    moddedPreimage = int(gmpy2.f_mod(preimage, divisor))
-    linkedlist.insert(moddedPreimage)
-    preimage = int(evaluateStack(exprStack[:], moddedPreimage))   # iteration
+    moddedPreimage = int(gmpy2.f_mod(preimage, divisor))                                                                # image to be analyzed
+    linkedlist.insert(moddedPreimage)                                                                                   # insert 5 % iteration
+    preimage = int(evaluateStack(exprStack[:], moddedPreimage))                                                         # iteration, moddedPreimage (added to list) is the x
     j+=1
-    moddedPreimage = int(gmpy2.f_mod(preimage, divisor))    # image
+    moddedPreimage = int(gmpy2.f_mod(preimage, divisor))                                                                # image to be analyzed
     linkedlist.insert(moddedPreimage)
-    tortoise = linkedlist.head.get_next()
-    preimage = int(evaluateStack(exprStack[:], moddedPreimage))
+    tortoise = linkedlist.head.get_next()                                                                               # head doesn't have any data
+    preimage = int(evaluateStack(exprStack[:], moddedPreimage))                                                         # iteration
     j+=1
-    moddedPreimage = int(gmpy2.f_mod(preimage, divisor))
+    moddedPreimage = int(gmpy2.f_mod(preimage, divisor))                                                                # image to be analyzed
     linkedlist.insert(moddedPreimage)
-    hare = linkedlist.head.get_next().get_next()
+    hare = linkedlist.head.get_next().get_next()                                                                        # do two iterations so that the hare has a node
     #if gmpy2.is_strong_prp(i) == True and
     #for i in range(divisor*2):
     while(True):
@@ -209,11 +213,13 @@ def generate(linkedlist, preimage, divisor, slope, b):
         moddedPreimage = int(gmpy2.f_mod(preimage, divisor))
         linkedlist.insert(moddedPreimage)
         if j > 1 and j % math.ceil(divisor*(1/2)) == 0 and findPeriod(linkedlist, divisor, slope, b) == True:
-            print('{} Period found.'.format(divisor))
+            print('Period found mod {}.'.format(divisor))
             periodFound = True
             return True
     return False
+# END ITERATOR
 
+# UNNECESSARY FUNCTION
 def findStrictlyPrePeriodicNodes(divisor, periodic):
     # if image is in periodic list, then it is preperiodic
     # if it is not, then period finder needs to be ran again
@@ -228,8 +234,9 @@ def findStrictlyPrePeriodicNodes(divisor, periodic):
         moddedImage = int(gmpy2.f_mod(image, divisor))
         if moddedImage in periodic:
             preperiodic.append(i)
+# UNNECESSARY FUNCTION
 
-
+# BEGIN TORTOISE AND HARE ALGORITHM
 def findPeriod(linkedlist, modulus, slope, b):
     global tortoise
     global hare
@@ -273,12 +280,13 @@ def findPeriod(linkedlist, modulus, slope, b):
 
         hare = hare.get_next()
     return True
+# END TORTOISE AND HARE ALGORITHM
 
-
+# BEGIN GUI
 class PeriodPlotterGUI:
     def __init__(self):
         self.main_window = tkinter.Tk()
-        self.main_window.title("Period Plotter")
+        self.main_window.title("Periodic Point Plotter")
         self.main_window.minsize(width=500, height=75)
         self.function_frame = tkinter.Frame(self.main_window)
         self.line_frame = tkinter.Frame(self.main_window)
@@ -324,6 +332,7 @@ class PeriodPlotterGUI:
             generate(modImageNodes, 5, i, self.slope, self.b)
         plt.axis([0,1000,0,1000])
         plt.show()
+# END GUI
 
 
 
