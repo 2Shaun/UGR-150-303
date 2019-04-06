@@ -12,7 +12,7 @@ Here is a sample plot with 'x^2-3' as the function and the line option left blan
 
 ![](periodicTex.png)
 
-where phi is the function input.
+where phi is the inputted function.
 
 <h2>Plot of x²-3</h2>
 
