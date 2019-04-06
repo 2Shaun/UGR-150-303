@@ -8,7 +8,11 @@ Upon running periodicList.py with Python3, you will be presented with:
 
 The program will repeatedly apply the given function (starting at 5) until a period is found mod n, where it checks all n in the range of 1 to 1000.
 
-Here is a sample plot with 'x^2-3' as the function and the line option left blank, where the x-axis represents n and y represents some value. A black dot at (x,y) means x is periodic mod y.
+Here is a sample plot with 'x^2-3' as the function and the line option left blank, where the x-axis represents n and y represents some value. A black dot at (x,y) means x is periodic mod y, i.e.,
+
+![](periodicTex.png),
+
+where phi is the function input.
 
 <h2>Plot of x²-3</h2>
 
