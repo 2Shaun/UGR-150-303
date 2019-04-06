@@ -10,7 +10,7 @@ The program will repeatedly apply the given function (starting at 5) until a per
 
 Here is a sample plot with 'x^2-3' as the function and the line option left blank, where the x-axis represents n and y represents some value. A black dot at (x,y) means x is periodic mod y, i.e.,
 
-![](periodicTex.png),
+![](periodicTex.png)
 
 where phi is the function input.
 
