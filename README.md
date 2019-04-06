@@ -1,6 +1,6 @@
 # UGR-150-303
 <h1>Visualizing Dynamical Systems of Polynomials Modulo <i>n</i> Using Matplotlib</h1>
-<h2>Undergraduate Research Project with Jonathan Weisbrod<h2>
+<h2>Undergraduate Research Project with Jonathan Weisbrod</h2>
 
 Upon running periodicList.py with Python3, you will be presented with:
 
